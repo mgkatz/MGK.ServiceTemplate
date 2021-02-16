@@ -1,0 +1,16 @@
+﻿using MGK.ServiceBase.Infrastructure.Extensions;
+using MGK.ServiceTemplate.DataAccess.Infrastructure.Extensions;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace MGK.ServiceTemplate.Manager.Infrastructure.Extensions
+{
+    public static class ServiceRegistrationExtensions
+    {
+        public static void AddManagerServices(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddDatabaseServices(configuration);
+            services.AddServicesInAssembly<MappingProfile>(configuration);
+        }
+    }
+}
