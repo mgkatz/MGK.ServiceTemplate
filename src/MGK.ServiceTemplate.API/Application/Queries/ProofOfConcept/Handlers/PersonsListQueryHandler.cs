@@ -1,5 +1,7 @@
-﻿using AutoMapper;
+﻿using MGK.Acceptance;
 using MGK.ServiceBase.CQRS.Queries;
+using MGK.ServiceBase.CQRS.SeedWork;
+using MGK.ServiceTemplate.API.Infrastructure.ServiceProviders;
 using MGK.ServiceTemplate.API.Models.ProofOfConcept;
 using MGK.ServiceTemplate.Manager.Infrastructure.Services.ProofOfConcept;
 using System.Collections.Generic;
@@ -8,24 +10,29 @@ using System.Threading.Tasks;
 
 namespace MGK.ServiceTemplate.API.Application.Queries.ProofOfConcept.Handlers
 {
-	public class PersonsListQueryHandler :
+	public class PersonsListQueryHandler : QueryHandler<PersonsListQueryHandler>,
+		IHandlerService,
 		IQueryEnumerableHandler<GetAllPersonsQuery, IEnumerable<PersonViewModel>>
 	{
-		private readonly IMapper _mapper;
-		private readonly IPersonService _personService;
+		private readonly IManagerServiceProvider _managerServiceProvider;
 
 		public PersonsListQueryHandler(
-			IPersonService personService,
-			IMapper mapper)
+			IManagerServiceProvider managerServiceProvider,
+			ICqrsInternalServices<PersonsListQueryHandler> internalServices)
+			: base(internalServices)
 		{
-			_mapper = mapper;
-			_personService = personService;
+			Ensure.Parameter.IsNotNull(managerServiceProvider, nameof(managerServiceProvider));
+
+			_managerServiceProvider = managerServiceProvider;
 		}
+
+		private IPersonService PersonService
+			=> _managerServiceProvider.Get<IPersonService>();
 
 		public async Task<IEnumerable<PersonViewModel>> Handle(GetAllPersonsQuery request, CancellationToken cancellationToken)
 		{
-			var persons = await _personService.GetAllPersonsAsync();
-			return _mapper.Map<PersonViewModel[]>(persons);
+			var persons = await PersonService.GetAllPersonsAsync();
+			return Mapper.Map<PersonViewModel[]>(persons);
 		}
 	}
 }

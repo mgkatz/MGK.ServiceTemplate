@@ -15,8 +15,7 @@ namespace MGK.ServiceTemplate.API
         {
             var configuration = AppInitializer.GetConfiguration();
             Log.Logger = new LoggerConfiguration()
-               .ReadFrom
-               .Configuration(configuration)
+               .ReadFrom.Configuration(configuration)
                .CreateLogger();
 
             Log.Information(BaseResources.MessagesResources.LoggingStartUp);
@@ -33,6 +32,10 @@ namespace MGK.ServiceTemplate.API
             {
                 Log.Fatal(ex, BaseResources.MessagesResources.ErrorApplicationBrake);
             }
+            finally
+            {
+                Log.CloseAndFlush();
+			}
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>

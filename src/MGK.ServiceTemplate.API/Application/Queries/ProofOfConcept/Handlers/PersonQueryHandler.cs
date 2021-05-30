@@ -1,8 +1,9 @@
-﻿using AutoMapper;
-using MGK.Acceptance;
+﻿using MGK.Acceptance;
 using MGK.Extensions;
 using MGK.ServiceBase.CQRS.Queries;
-using MGK.ServiceBase.Infrastructure.Exceptions;
+using MGK.ServiceBase.CQRS.SeedWork;
+using MGK.ServiceBase.IWEManager.Infrastructure.Exceptions;
+using MGK.ServiceTemplate.API.Infrastructure.ServiceProviders;
 using MGK.ServiceTemplate.API.Models.ProofOfConcept;
 using MGK.ServiceTemplate.Manager.Infrastructure.Services.ProofOfConcept;
 using System.Threading;
@@ -10,23 +11,28 @@ using System.Threading.Tasks;
 
 namespace MGK.ServiceTemplate.API.Application.Queries.ProofOfConcept.Handlers
 {
-	public class PersonQueryHandler :
+	public class PersonQueryHandler : QueryHandler<PersonQueryHandler>,
+		IHandlerService,
 		IQueryHandler<GetPersonQuery, PersonViewModel>
 	{
-		private readonly IMapper _mapper;
-		private readonly IPersonService _personService;
+		private readonly IManagerServiceProvider _managerServiceProvider;
 
 		public PersonQueryHandler(
-			IPersonService personService,
-			IMapper mapper)
+			IManagerServiceProvider managerServiceProvider,
+			ICqrsInternalServices<PersonQueryHandler> internalServices)
+			: base(internalServices)
 		{
-			_mapper = mapper;
-			_personService = personService;
+			Ensure.Parameter.IsNotNull(managerServiceProvider, nameof(managerServiceProvider));
+
+			_managerServiceProvider = managerServiceProvider;
 		}
+
+		private IPersonService PersonService
+			=> _managerServiceProvider.Get<IPersonService>();
 
 		public async Task<PersonViewModel> Handle(GetPersonQuery request, CancellationToken cancellationToken)
 		{
-			var personDto = await _personService.GetPersonByIdAsync(request.PersonId);
+			var personDto = await PersonService.GetPersonByIdAsync(request.PersonId);
 
 			if (personDto == null)
 			{
@@ -35,7 +41,7 @@ namespace MGK.ServiceTemplate.API.Application.Queries.ProofOfConcept.Handlers
 					APIResources.MessagesResources.ErrorPersonNotExistsDetails.Format(request.PersonId));
 			}
 
-			return _mapper.Map<PersonViewModel>(personDto);
+			return Mapper.Map<PersonViewModel>(personDto);
 		}
 	}
 }

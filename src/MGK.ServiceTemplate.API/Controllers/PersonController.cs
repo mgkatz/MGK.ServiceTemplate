@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
 using MGK.Acceptance;
-using MGK.ServiceBase.Infrastructure.Exceptions;
+using MGK.ServiceBase.IWEManager.Models;
 using MGK.ServiceTemplate.API.Application.Commands.ProofOfConcept;
 using MGK.ServiceTemplate.API.Application.Queries.ProofOfConcept;
 using MGK.ServiceTemplate.API.Application.Requests.ProofOfConcept;

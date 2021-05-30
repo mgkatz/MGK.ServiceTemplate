@@ -1,43 +1,45 @@
-﻿using AutoMapper;
-using MGK.Acceptance;
+﻿using MGK.Acceptance;
 using MGK.Extensions;
-using MGK.ServiceBase.Infrastructure.Exceptions;
+using MGK.ServiceBase.Services.Infrastructure.Exceptions;
 using MGK.ServiceTemplate.DataAccess.Infrastructure.Queries.ProofOfConcept;
 using MGK.ServiceTemplate.DataAccess.Infrastructure.UnitOfWork;
 using MGK.ServiceTemplate.DataAccess.Models.ProofOfConcept;
+using MGK.ServiceTemplate.Manager.Infrastructure.ServiceProviders;
 using MGK.ServiceTemplate.Manager.Infrastructure.Services.ProofOfConcept;
 using MGK.ServiceTemplate.Manager.Models.ProofOfConcept;
+using MGK.ServiceTemplate.Manager.SeedWork;
+using MGK.ServiceTemplate.Manager.Services.Base;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace MGK.ServiceTemplate.Manager.Services.ProofOfConcept
 {
-	public class PersonService : IPersonService
+	public class PersonService : ManagerServiceBase<PersonService>, IPersonService
 	{
-		private readonly IProofOfConceptUoW _proofOfConceptUoW;
-		private readonly IPersonQueryBuilder _personQueryBuilder;
-		private readonly IMapper _mapper;
+		private readonly IDataAccessServiceProvider _dataAccessServiceProvider;
 
 		public PersonService(
-			IProofOfConceptUoW proofOfConceptUoW,
-			IPersonQueryBuilder personQueryBuilder,
-			IMapper mapper)
+			IDataAccessServiceProvider dataAccessServiceProvider,
+			IManagerInternalServices<PersonService> internalServices)
+			: base(internalServices)
 		{
-			Ensure.Parameter.IsNotNull(proofOfConceptUoW, nameof(proofOfConceptUoW));
-			Ensure.Parameter.IsNotNull(personQueryBuilder, nameof(personQueryBuilder));
-			Ensure.Parameter.IsNotNull(mapper, nameof(mapper));
+			Ensure.Parameter.IsNotNull(dataAccessServiceProvider, nameof(dataAccessServiceProvider));
 
-			_proofOfConceptUoW = proofOfConceptUoW;
-			_personQueryBuilder = personQueryBuilder;
-			_mapper = mapper;
+			_dataAccessServiceProvider = dataAccessServiceProvider;
 		}
+
+		private IPersonQueryConstructor PersonQueryConstructor
+			=> _dataAccessServiceProvider.Get<IPersonQueryConstructor>();
+
+		private IProofOfConceptUoW ProofOfConceptUoW
+			=> _dataAccessServiceProvider.Get<IProofOfConceptUoW>();
 
 		public async Task<PersonDto> AddPersonAsync(AddPersonDto addPersonDto)
 		{
 			Ensure.Parameter.IsNotNull(addPersonDto, nameof(addPersonDto));
 
-			var person = await _personQueryBuilder
+			var person = await PersonQueryConstructor
 				.Start()
 				.FilterByDocumentNumber(addPersonDto.DocumentNumber)
 				.GetRecordAsync();
@@ -49,15 +51,15 @@ namespace MGK.ServiceTemplate.Manager.Services.ProofOfConcept
 					ManagerResources.MessagesResources.ErrorPersonAlreadyExistsDetails.Format(addPersonDto.DocumentNumber));
 			}
 
-			person = _proofOfConceptUoW.Add(_mapper.Map<Person>(addPersonDto));
-			await _proofOfConceptUoW.CommitChangesAsync();
+			person = ProofOfConceptUoW.Add(Mapper.Map<Person>(addPersonDto));
+			await ProofOfConceptUoW.CommitChangesAsync();
 
-			return _mapper.Map<PersonDto>(person);
+			return Mapper.Map<PersonDto>(person);
 		}
 
 		public async Task<IEnumerable<PersonDto>> GetAllPersonsAsync()
 		{
-			return await _personQueryBuilder
+			return await PersonQueryConstructor
 				.Start()
 				.OrderByFullName()
 				.QueryAsArrayAsync<PersonDto>();
@@ -65,7 +67,7 @@ namespace MGK.ServiceTemplate.Manager.Services.ProofOfConcept
 
 		public async Task<PersonDto> GetPersonByIdAsync(Guid personId)
 		{
-			return await _personQueryBuilder
+			return await PersonQueryConstructor
 				.Start()
 				.FilterById(personId)
 				.GetRecordAsync<PersonDto>();
@@ -82,8 +84,8 @@ namespace MGK.ServiceTemplate.Manager.Services.ProofOfConcept
 					ManagerResources.MessagesResources.ErrorPersonNotExistsDetails.Format(personId));
 			}
 
-			_proofOfConceptUoW.RemoveByIds<Person>(personId);
-			await _proofOfConceptUoW.CommitChangesAsync();
+			ProofOfConceptUoW.RemoveByIds<Person>(personId);
+			await ProofOfConceptUoW.CommitChangesAsync();
 
 			return personDto;
 		}
@@ -92,7 +94,7 @@ namespace MGK.ServiceTemplate.Manager.Services.ProofOfConcept
 		{
 			Ensure.Parameter.IsNotNull(personDto, nameof(personDto));
 
-			var person = await _personQueryBuilder
+			var person = await PersonQueryConstructor
 				.Start()
 				.FilterById(personDto.PersonId)
 				.GetRecordAsync(true);
@@ -108,9 +110,9 @@ namespace MGK.ServiceTemplate.Manager.Services.ProofOfConcept
 			person.Surname = personDto.Surname;
 			person.LastUpdateDate = DateTime.UtcNow;
 
-			await _proofOfConceptUoW.CommitChangesAsync();
+			await ProofOfConceptUoW.CommitChangesAsync();
 
-			return _mapper.Map(person, personDto);
+			return Mapper.Map(person, personDto);
 		}
 	}
 }
