@@ -1,4 +1,4 @@
-﻿using MGK.ServiceBase.SeedWork;
+﻿using MGK.ServiceBase.Services.SeedWork;
 using MGK.ServiceTemplate.API.Constants;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

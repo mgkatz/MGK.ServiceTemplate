@@ -1,6 +1,8 @@
-﻿using AutoMapper;
+﻿using MGK.Acceptance;
 using MGK.Extensions;
 using MGK.ServiceBase.CQRS.Commands;
+using MGK.ServiceBase.CQRS.SeedWork;
+using MGK.ServiceTemplate.API.Infrastructure.ServiceProviders;
 using MGK.ServiceTemplate.API.Models;
 using MGK.ServiceTemplate.API.Models.ProofOfConcept;
 using MGK.ServiceTemplate.Manager.Infrastructure.Services.ProofOfConcept;
@@ -10,33 +12,38 @@ using System.Threading.Tasks;
 
 namespace MGK.ServiceTemplate.API.Application.Commands.ProofOfConcept.Handlers
 {
-	public class PersonCommandHandler :
+	public class PersonCommandHandler : CommandHandler<PersonCommandHandler>,
+		IHandlerService,
 		ICommandHandler<AddPersonCommand, PersonViewModel>,
 		ICommandHandler<RemovePersonCommand, ResponseViewModel>,
 		ICommandHandler<UpdatePersonCommand, PersonViewModel>
 	{
-		private readonly IPersonService _personService;
-		private readonly IMapper _mapper;
+		private readonly IManagerServiceProvider _managerServiceProvider;
 
 		public PersonCommandHandler(
-			IPersonService personService,
-			IMapper mapper)
+			IManagerServiceProvider managerServiceProvider,
+			ICqrsInternalServices<PersonCommandHandler> internalServices)
+			: base(internalServices)
 		{
-			_personService = personService;
-			_mapper = mapper;
+			Ensure.Parameter.IsNotNull(managerServiceProvider, nameof(managerServiceProvider));
+
+			_managerServiceProvider = managerServiceProvider;
 		}
+
+		private IPersonService PersonService
+			=> _managerServiceProvider.Get<IPersonService>();
 
 		public async Task<PersonViewModel> Handle(AddPersonCommand request, CancellationToken cancellationToken)
 		{
-			var addPersonDto = _mapper.Map<AddPersonDto>(request);
-			var personDto = await _personService.AddPersonAsync(addPersonDto);
+			var addPersonDto = Mapper.Map<AddPersonDto>(request);
+			var personDto = await PersonService.AddPersonAsync(addPersonDto);
 
-			return _mapper.Map<PersonViewModel>(personDto);
+			return Mapper.Map<PersonViewModel>(personDto);
 		}
 
 		public async Task<ResponseViewModel> Handle(RemovePersonCommand request, CancellationToken cancellationToken)
 		{
-			var personDto = await _personService.RemovePerson(request.PersonId);
+			var personDto = await PersonService.RemovePerson(request.PersonId);
 
 			return new ResponseViewModel
 			{
@@ -47,10 +54,10 @@ namespace MGK.ServiceTemplate.API.Application.Commands.ProofOfConcept.Handlers
 
 		public async Task<PersonViewModel> Handle(UpdatePersonCommand request, CancellationToken cancellationToken)
 		{
-			var personDto = _mapper.Map<PersonDto>(request);
-			personDto = await _personService.UpdatePerson(personDto);
-
-			return _mapper.Map<PersonViewModel>(personDto);
+			var personDto = Mapper.Map<PersonDto>(request);
+			personDto = await PersonService.UpdatePerson(personDto);
+			// Logger.LogInformation("Person information was updated successfully.");
+			return Mapper.Map<PersonViewModel>(personDto);
 		}
 	}
 }

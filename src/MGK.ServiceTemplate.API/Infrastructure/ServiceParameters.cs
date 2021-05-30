@@ -1,10 +1,10 @@
-﻿using MGK.ServiceBase.SeedWork;
+﻿using MGK.ServiceBase.Configuration.SeedWork;
 using MGK.ServiceTemplate.API.Constants;
 using System;
 
 namespace MGK.ServiceTemplate.API.Infrastructure
 {
-	public class ServiceParameters : IServiceParameters
+	public class ServiceParameters : IMicroServiceParameters
 	{
 		public ServiceParameters()
 		{

@@ -48,14 +48,14 @@ namespace MGK.ServiceTemplate.API
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 		{
-			if (env.IsDevelopment())
-			{
-				app.UseDeveloperExceptionPage();
-			}
-
+			app.UseDeveloperExceptionPage();
+			app.UseLogMiddleware();
+			app.AddAppConfigurations(_configuration);
 			app.UseHsts();
+			app.UseStatusCodePages();
 			app.UseHttpsRedirection();
 			app.UseRouting();
+			//app.UseCors();
 			//app.UseAuthentication();
 			app.UseAuthorization();
 
@@ -63,9 +63,6 @@ namespace MGK.ServiceTemplate.API
 			{
 				app.UseDevMiddleware();
 			}
-
-			// Configure application features
-			app.AddAppConfigurations(_configuration);
 
 			app.UseEndpoints(ep =>
 				ep.MapControllers());

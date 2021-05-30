@@ -9,20 +9,22 @@ using System.Collections.Generic;
 
 namespace MGK.ServiceTemplate.DataAccess.Queries.ProofOfConcept
 {
-	public class PersonQueryBuilder : ProofOfConceptQueryBuilder<Person, IPersonQueryBuilder>, IPersonQueryBuilder
+	public class PersonQueryConstructor :
+		ProofOfConceptQueryConstructor<Person, IPersonQueryConstructor>,
+		IPersonQueryConstructor
 	{
-		public PersonQueryBuilder(ProofOfConceptContext context, IMapper mapper)
+		public PersonQueryConstructor(ProofOfConceptContext context, IMapper mapper)
 			: base(context, mapper)
 		{
 		}
 
-		public IPersonQueryBuilder FilterByDocumentNumber(string documentNumber)
+		public IPersonQueryConstructor FilterByDocumentNumber(string documentNumber)
 			=> FilterBy(PersonExpressions.DocumentNumberFilter(documentNumber));
 
-		public IPersonQueryBuilder FilterById(Guid personId)
+		public IPersonQueryConstructor FilterById(Guid personId)
 			=> FilterBy(PersonExpressions.PersonIdFilter(personId));
 
-		public IPersonQueryBuilder OrderByFullName()
+		public IPersonQueryConstructor OrderByFullName()
 		{
 			var keySelectors = new List<OrderSelector<Person, object>>
 			{
