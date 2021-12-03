@@ -7,6 +7,7 @@ using MGK.ServiceTemplate.API.Models;
 using MGK.ServiceTemplate.API.Models.ProofOfConcept;
 using MGK.ServiceTemplate.Manager.Infrastructure.Services.ProofOfConcept;
 using MGK.ServiceTemplate.Manager.Models.ProofOfConcept;
+using Microsoft.Extensions.Logging;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -33,30 +34,32 @@ namespace MGK.ServiceTemplate.API.Application.Commands.ProofOfConcept.Handlers
 		private IPersonService PersonService
 			=> _managerServiceProvider.Get<IPersonService>();
 
-		public async Task<PersonViewModel> Handle(AddPersonCommand request, CancellationToken cancellationToken)
+		public async Task<PersonViewModel> Handle(AddPersonCommand request, CancellationToken cancellationToken = default)
 		{
 			var addPersonDto = Mapper.Map<AddPersonDto>(request);
-			var personDto = await PersonService.AddPersonAsync(addPersonDto);
+			var personDto = await PersonService.AddPersonAsync(addPersonDto, cancellationToken);
+			Logger.LogInformation($"A new person with id '{personDto.PersonId}' was added successfully.");
 
 			return Mapper.Map<PersonViewModel>(personDto);
 		}
 
-		public async Task<ResponseViewModel> Handle(RemovePersonCommand request, CancellationToken cancellationToken)
+		public async Task<ResponseViewModel> Handle(RemovePersonCommand request, CancellationToken cancellationToken = default)
 		{
-			var personDto = await PersonService.RemovePerson(request.PersonId);
+			var personDto = await PersonService.RemovePerson(request.PersonId, cancellationToken);
+			Logger.LogInformation($"The information of the person with id '{request.PersonId}' was removed successfully.");
 
 			return new ResponseViewModel
 			{
 				Message = APIResources.MessagesResources.InformationRemovePersonSuccess.Format(personDto.FullName, personDto.DocumentNumber),
-				Data = new RemovedPersonViewModel(personDto.FullName, personDto.DocumentNumber)
+				Data = new RemovedPersonViewModel { Fullname = personDto.FullName, DocumentNumber = personDto.DocumentNumber }
 			};
 		}
 
-		public async Task<PersonViewModel> Handle(UpdatePersonCommand request, CancellationToken cancellationToken)
+		public async Task<PersonViewModel> Handle(UpdatePersonCommand request, CancellationToken cancellationToken = default)
 		{
 			var personDto = Mapper.Map<PersonDto>(request);
-			personDto = await PersonService.UpdatePerson(personDto);
-			// Logger.LogInformation("Person information was updated successfully.");
+			personDto = await PersonService.UpdatePerson(personDto, cancellationToken);
+			Logger.LogInformation($"The information of the person with id '{request.PersonId}' was updated successfully.");
 			return Mapper.Map<PersonViewModel>(personDto);
 		}
 	}

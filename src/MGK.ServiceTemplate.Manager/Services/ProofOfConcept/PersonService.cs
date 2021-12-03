@@ -4,38 +4,32 @@ using MGK.ServiceBase.Services.Infrastructure.Exceptions;
 using MGK.ServiceTemplate.DataAccess.Infrastructure.Queries.ProofOfConcept;
 using MGK.ServiceTemplate.DataAccess.Infrastructure.UnitOfWork;
 using MGK.ServiceTemplate.DataAccess.Models.ProofOfConcept;
-using MGK.ServiceTemplate.Manager.Infrastructure.ServiceProviders;
 using MGK.ServiceTemplate.Manager.Infrastructure.Services.ProofOfConcept;
 using MGK.ServiceTemplate.Manager.Models.ProofOfConcept;
 using MGK.ServiceTemplate.Manager.SeedWork;
 using MGK.ServiceTemplate.Manager.Services.Base;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MGK.ServiceTemplate.Manager.Services.ProofOfConcept
 {
 	public class PersonService : ManagerServiceBase<PersonService>, IPersonService
 	{
-		private readonly IDataAccessServiceProvider _dataAccessServiceProvider;
-
 		public PersonService(
-			IDataAccessServiceProvider dataAccessServiceProvider,
 			IManagerInternalServices<PersonService> internalServices)
 			: base(internalServices)
 		{
-			Ensure.Parameter.IsNotNull(dataAccessServiceProvider, nameof(dataAccessServiceProvider));
-
-			_dataAccessServiceProvider = dataAccessServiceProvider;
 		}
 
 		private IPersonQueryConstructor PersonQueryConstructor
-			=> _dataAccessServiceProvider.Get<IPersonQueryConstructor>();
+			=> DataAccessServiceProvider.Get<IPersonQueryConstructor>();
 
 		private IProofOfConceptUoW ProofOfConceptUoW
-			=> _dataAccessServiceProvider.Get<IProofOfConceptUoW>();
+			=> DataAccessServiceProvider.Get<IProofOfConceptUoW>();
 
-		public async Task<PersonDto> AddPersonAsync(AddPersonDto addPersonDto)
+		public async Task<PersonDto> AddPersonAsync(AddPersonDto addPersonDto, CancellationToken cancellationToken = default)
 		{
 			Ensure.Parameter.IsNotNull(addPersonDto, nameof(addPersonDto));
 
@@ -52,28 +46,24 @@ namespace MGK.ServiceTemplate.Manager.Services.ProofOfConcept
 			}
 
 			person = ProofOfConceptUoW.Add(Mapper.Map<Person>(addPersonDto));
-			await ProofOfConceptUoW.CommitChangesAsync();
+			await ProofOfConceptUoW.CommitChangesAsync(cancellationToken);
 
 			return Mapper.Map<PersonDto>(person);
 		}
 
 		public async Task<IEnumerable<PersonDto>> GetAllPersonsAsync()
-		{
-			return await PersonQueryConstructor
+			=> await PersonQueryConstructor
 				.Start()
 				.OrderByFullName()
 				.QueryAsArrayAsync<PersonDto>();
-		}
 
 		public async Task<PersonDto> GetPersonByIdAsync(Guid personId)
-		{
-			return await PersonQueryConstructor
+			=> await PersonQueryConstructor
 				.Start()
 				.FilterById(personId)
 				.GetRecordAsync<PersonDto>();
-		}
 
-		public async Task<PersonDto> RemovePerson(Guid personId)
+		public async Task<PersonDto> RemovePerson(Guid personId, CancellationToken cancellationToken = default)
 		{
 			var personDto = await GetPersonByIdAsync(personId);
 
@@ -85,12 +75,12 @@ namespace MGK.ServiceTemplate.Manager.Services.ProofOfConcept
 			}
 
 			ProofOfConceptUoW.RemoveByIds<Person>(personId);
-			await ProofOfConceptUoW.CommitChangesAsync();
+			await ProofOfConceptUoW.CommitChangesAsync(cancellationToken);
 
 			return personDto;
 		}
 
-		public async Task<PersonDto> UpdatePerson(PersonDto personDto)
+		public async Task<PersonDto> UpdatePerson(PersonDto personDto, CancellationToken cancellationToken = default)
 		{
 			Ensure.Parameter.IsNotNull(personDto, nameof(personDto));
 
@@ -110,7 +100,7 @@ namespace MGK.ServiceTemplate.Manager.Services.ProofOfConcept
 			person.Surname = personDto.Surname;
 			person.LastUpdateDate = DateTime.UtcNow;
 
-			await ProofOfConceptUoW.CommitChangesAsync();
+			await ProofOfConceptUoW.CommitChangesAsync(cancellationToken);
 
 			return Mapper.Map(person, personDto);
 		}

@@ -2,3 +2,33 @@
 - Serilog:
 	https://github.com/serilog/serilog-aspnetcore
 	https://github.com/serilog/serilog-settings-configuration
+
+Mandatory Packages
+- MGK.ServiceBase.API
+- Microsoft.AspNetCore.Mvc.NewtonsoftJson
+- Microsoft.EntityFrameworkCore.Design (only if you are using EF Core)
+- Serilog.Enrichers.AspNetCore
+- Serilog.Enrichers.ClientInfo
+- Serilog.Enrichers.Environment
+- Serilog.Enrichers.Process
+- Serilog.Enrichers.Thread
+- Serilog.Expressions
+- Serilog.Sinks.MSSqlServer (only if you use Microsoft SQL Server as DB)
+
+Format of json property for database setup (for Microsoft SQL Server):
+	"databaseSetup": [
+		{
+			"alias": "<alias for a specific setup>",
+			"databases": [
+				{
+					"alias": "<alias for the connection string>",
+					"name": "<database name>",
+					"queryTimeout": <timeout for queries>
+				}
+			],
+			"server": "<name of the databases' server>",
+			"userID": "<if the connection is through a user, here goes the username>",
+			"password": "<if the connection is through a user, here goes the password>",
+			"useIntegratedSecurity": "<true or false to define if integrated security is used>"
+		}
+	]

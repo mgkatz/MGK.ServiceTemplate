@@ -6,18 +6,20 @@ namespace MGK.ServiceTemplate.API.Models.ProofOfConcept
 {
 	public class PersonViewModel : IPersonContract, IResponse
 	{
-		public Guid PersonId { get; set; }
+		public Guid PersonId { get; init; }
 
-		public string Name { get; set; }
+		public string Name { get; init; }
 
-		public string Surname { get; set; }
+		public string Surname { get; init; }
 
-		public string DocumentNumber { get; set; }
+		public string DocumentNumber { get; init; }
 
-		public DateTime BirthDate { get; set; }
+		public DateTime BirthDate { get; init; }
 
-		public DateTime CreationDate { get; set; }
+		public int Age { get; init; }
 
-		public DateTime? LastUpdateDate { get; set; }
+		public DateTime CreationDate { get; init; }
+
+		public DateTime? LastUpdateDate { get; init; }
 	}
 }

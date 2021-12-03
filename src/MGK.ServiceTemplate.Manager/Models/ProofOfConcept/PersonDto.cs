@@ -17,6 +17,8 @@ namespace MGK.ServiceTemplate.Manager.Models.ProofOfConcept
 
 		public DateTime BirthDate { get; set; }
 
+		public int Age => DateTime.Today.AddTicks(-BirthDate.Ticks).Year - 1;
+
 		public DateTime CreationDate { get; set; }
 
 		public DateTime? LastUpdateDate { get; set; }

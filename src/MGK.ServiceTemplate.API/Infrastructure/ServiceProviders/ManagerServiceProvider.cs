@@ -1,11 +1,12 @@
 ﻿using MGK.ServiceBase.Services;
 using MGK.ServiceTemplate.Manager.SeedWork;
+using System;
 
 namespace MGK.ServiceTemplate.API.Infrastructure.ServiceProviders
 {
 	public sealed class ManagerServiceProvider : ServiceProvider<string, IManagerService>, IManagerServiceProvider
 	{
-		public ManagerServiceProvider(System.Func<string, IManagerService> managerServices)
+		public ManagerServiceProvider(Func<string, IManagerService> managerServices)
 			: base(managerServices)
 		{
 		}

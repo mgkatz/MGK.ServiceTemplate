@@ -5,15 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="10.1.1" />
-    <PackageReference Include="MGK.Acceptance" Version="1.0.1.3" />
-    <PackageReference Include="MGK.ServiceBase.CQRS" Version="1.0.3" />
-    <PackageReference Include="MGK.ServiceBase.DAL" Version="1.0.3" />
-    <PackageReference Include="MGK.ServiceBase.IWEManager" Version="1.0.0" />
-    <PackageReference Include="MGK.ServiceBase.Services" Version="1.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\MGK.ServiceTemplate.DataAccess\MGK.ServiceTemplate.DataAccess.csproj" />
   </ItemGroup>
 

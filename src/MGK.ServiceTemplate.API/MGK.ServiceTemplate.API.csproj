@@ -12,40 +12,19 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="10.1.1" />
-    <PackageReference Include="FluentValidation" Version="10.1.0" />
-    <PackageReference Include="FluentValidation.AspNetCore" Version="10.1.0" />
-    <PackageReference Include="MediatR" Version="9.0.0" />
-    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />
-    <PackageReference Include="MGK.Acceptance" Version="1.0.1.3" />
-    <PackageReference Include="MGK.Extensions" Version="1.0.6.1" />
-    <PackageReference Include="MGK.ServiceBase.API" Version="1.0.3" />
-    <PackageReference Include="MGK.ServiceBase.Configuration" Version="1.0.0" />
-    <PackageReference Include="MGK.ServiceBase.CQRS" Version="1.0.3" />
-    <PackageReference Include="MGK.ServiceBase.IWEManager" Version="1.0.0" />
-    <PackageReference Include="MGK.ServiceBase.Services" Version="1.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.6" />
+    <PackageReference Include="MGK.ServiceBase.API" Version="1.0.4" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="5.0.6" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.6">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="Serilog" Version="2.10.0" />
-    <PackageReference Include="Serilog.AspNetCore" Version="4.1.0" />
     <PackageReference Include="Serilog.Enrichers.AspNetCore" Version="1.0.0" />
     <PackageReference Include="Serilog.Enrichers.ClientInfo" Version="1.1.3" />
     <PackageReference Include="Serilog.Enrichers.Environment" Version="2.1.3" />
     <PackageReference Include="Serilog.Enrichers.Process" Version="2.0.1" />
     <PackageReference Include="Serilog.Enrichers.Thread" Version="3.1.0" />
     <PackageReference Include="Serilog.Expressions" Version="2.0.0" />
-    <PackageReference Include="Serilog.Extensions.Hosting" Version="4.1.2" />
-    <PackageReference Include="Serilog.Settings.Configuration" Version="3.1.0" />
-    <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
-    <PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
     <PackageReference Include="Serilog.Sinks.MSSqlServer" Version="5.6.0" />
-    <PackageReference Include="SlimMessageBus" Version="1.3.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.4" />
   </ItemGroup>
 
   <ItemGroup>
