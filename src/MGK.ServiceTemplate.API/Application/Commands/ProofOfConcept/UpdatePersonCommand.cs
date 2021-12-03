@@ -6,14 +6,10 @@ namespace MGK.ServiceTemplate.API.Application.Commands.ProofOfConcept
 {
 	public class UpdatePersonCommand : CommandBase<PersonViewModel>
 	{
-		public Guid PersonId { get; set; }
+		public Guid PersonId { get; init; }
 
 		public string Name { get; set; }
 
 		public string Surname { get; set; }
-
-		public UpdatePersonCommand()
-		{
-		}
 	}
 }

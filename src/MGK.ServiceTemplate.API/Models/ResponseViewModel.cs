@@ -4,8 +4,8 @@ namespace MGK.ServiceTemplate.API.Models
 {
 	public class ResponseViewModel : IResponse, IContract
 	{
-		public string Message { get; set; }
+		public string Message { get; init; }
 
-		public object Data { get; set; }
+		public object Data { get; init; }
 	}
 }

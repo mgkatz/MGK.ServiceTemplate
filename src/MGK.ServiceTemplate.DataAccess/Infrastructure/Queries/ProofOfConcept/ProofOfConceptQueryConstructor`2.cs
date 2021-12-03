@@ -2,7 +2,6 @@
 using MGK.ServiceBase.DAL.Infrastructure.Queries;
 using MGK.ServiceBase.DAL.SeedWork;
 using MGK.ServiceTemplate.DataAccess.Contexts;
-using MGK.ServiceTemplate.DataAccess.SeedWork;
 
 namespace MGK.ServiceTemplate.DataAccess.Infrastructure.Queries.ProofOfConcept
 {

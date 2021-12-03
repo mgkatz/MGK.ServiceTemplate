@@ -14,8 +14,7 @@ namespace MGK.ServiceTemplate.API.Infrastructure
 
 			CreateMap<AddPersonCommand, AddPersonDto>();
 
-			CreateMap<PersonViewModel, PersonDto>()
-				.ReverseMap();
+			CreateMap<PersonDto, PersonViewModel>();
 
 			CreateMap<UpdatePersonRequest, UpdatePersonCommand>();
 

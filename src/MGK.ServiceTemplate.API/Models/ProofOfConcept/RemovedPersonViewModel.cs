@@ -5,14 +5,8 @@ namespace MGK.ServiceTemplate.API.Models.ProofOfConcept
 {
 	public class RemovedPersonViewModel : IPersonContract, IResponse
 	{
-		public string Fullname { get; }
+		public string Fullname { get; init; }
 
-		public string DocumentNumber { get; }
-
-		public RemovedPersonViewModel(string fullName, string documentNumber)
-		{
-			Fullname = fullName;
-			DocumentNumber = documentNumber;
-		}
+		public string DocumentNumber { get; init; }
 	}
 }
