@@ -7,9 +7,5 @@ namespace MGK.ServiceTemplate.API.Application.Requests.ProofOfConcept
 		public string Name { get; set; }
 
 		public string Surname { get; set; }
-
-		public UpdatePersonRequest()
-		{
-		}
 	}
 }

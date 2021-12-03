@@ -6,8 +6,5 @@ namespace MGK.ServiceTemplate.API.Application.Queries.ProofOfConcept
 {
     public class GetAllPersonsQuery : QueryEnumerableBase<IEnumerable<PersonViewModel>>
     {
-        public GetAllPersonsQuery()
-        {
-        }
     }
 }

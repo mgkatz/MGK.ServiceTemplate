@@ -13,9 +13,5 @@ namespace MGK.ServiceTemplate.API.Application.Commands.ProofOfConcept
 		public string DocumentNumber { get; set; }
 
 		public DateTime BirthDate { get; set; }
-
-		public AddPersonCommand()
-		{
-		}
 	}
 }

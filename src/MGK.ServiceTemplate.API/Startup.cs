@@ -50,13 +50,14 @@ namespace MGK.ServiceTemplate.API
 		{
 			app.UseDeveloperExceptionPage();
 			app.UseLogMiddleware();
+
+			// Configure the app configurations declared in the assembly
 			app.AddAppConfigurations(_configuration);
+
 			app.UseHsts();
 			app.UseStatusCodePages();
 			app.UseHttpsRedirection();
 			app.UseRouting();
-			//app.UseCors();
-			//app.UseAuthentication();
 			app.UseAuthorization();
 
 			if (!env.IsProduction())

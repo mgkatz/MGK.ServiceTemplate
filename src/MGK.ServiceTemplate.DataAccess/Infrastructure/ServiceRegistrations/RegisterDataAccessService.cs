@@ -33,7 +33,7 @@ namespace MGK.ServiceTemplate.DataAccess.Infrastructure.ServiceRegistrations
 
         private static void AddDataAccessServices(IServiceCollection services)
         {
-            var queryConstructors = new Dictionary<string, Type>
+            var dataAccessServices = new Dictionary<string, Type>
             {
                 // Query Constructors
                 { nameof(IPersonQueryConstructor), typeof(PersonQueryConstructor) },
@@ -41,7 +41,7 @@ namespace MGK.ServiceTemplate.DataAccess.Infrastructure.ServiceRegistrations
                 { nameof(IProofOfConceptUoW), typeof(ProofOfConceptUoW) }
             };
 
-            services.AddKeyedServices<IDataAccessService, string>(queryConstructors);
+            services.AddKeyedServices<IDataAccessService, string>(dataAccessServices);
         }
     }
 }

@@ -6,11 +6,6 @@ namespace MGK.ServiceTemplate.API.Application.Queries.ProofOfConcept
 {
 	public class GetPersonQuery : QueryBase<PersonViewModel>
     {
-        public Guid PersonId { get; }
-
-        public GetPersonQuery(Guid personId)
-        {
-            PersonId = personId;
-        }
+        public Guid PersonId { get; init; }
     }
 }

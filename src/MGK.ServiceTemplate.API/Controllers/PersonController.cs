@@ -1,7 +1,6 @@
-﻿using AutoMapper;
-using MediatR;
-using MGK.Acceptance;
+﻿using MGK.ServiceBase.API;
 using MGK.ServiceBase.IWEManager.Models;
+using MGK.ServiceBase.SeedWork;
 using MGK.ServiceTemplate.API.Application.Commands.ProofOfConcept;
 using MGK.ServiceTemplate.API.Application.Queries.ProofOfConcept;
 using MGK.ServiceTemplate.API.Application.Requests.ProofOfConcept;
@@ -12,39 +11,35 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MGK.ServiceTemplate.API.Controllers
 {
     [Route(CoreConstants.ContextPath + "[controller]")]
     [ApiController]
-    public class PersonController : ControllerBase
+    public class PersonController : ApiControllerBase<PersonController>, IControllerService
     {
-        private readonly IMediator _mediator;
-        private readonly IMapper _mapper;
-
-        public PersonController(IMediator mediator, IMapper mapper)
+        public PersonController(
+            IControllerInternalServices<PersonController> internalServices)
+            : base(internalServices)
         {
-            Ensure.Parameter.IsNotNull(mediator, nameof(mediator));
-            Ensure.Parameter.IsNotNull(mapper, nameof(mapper));
-
-            _mediator = mediator;
-            _mapper = mapper;
         }
 
-        /// <summary>
-        /// Adds a person.
-        /// </summary>
-        /// <param name="request">Request with the person's information.</param>
-        /// <returns>The person information.</returns>
-        [HttpPost]
+		/// <summary>
+		/// Adds a person.
+		/// </summary>
+		/// <param name="request">Request with the person's information.</param>
+		/// <param name="cancellationToken">Cancellation Token in case the user cancels the process.</param>
+		/// <returns>The person information.</returns>
+		[HttpPost]
         [Route("add")]
         [ProducesResponseType(typeof(PersonViewModel), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ErrorDetails), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(ErrorDetails), (int)HttpStatusCode.Conflict)]
-        public async Task<IActionResult> AddPersonAsync([FromBody]AddPersonRequest request)
+        public async Task<IActionResult> AddPersonAsync([FromBody]AddPersonRequest request, CancellationToken cancellationToken = default)
         {
-            var result = await _mediator.Send(_mapper.Map<AddPersonCommand>(request));
+            var result = await Mediator.Send(Mapper.Map<AddPersonCommand>(request), cancellationToken);
             return Ok(result);
         }
 
@@ -57,7 +52,7 @@ namespace MGK.ServiceTemplate.API.Controllers
         [ProducesResponseType(typeof(IEnumerable<PersonViewModel>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetAllPersonsAsync()
         {
-            var results = await _mediator.Send(new GetAllPersonsQuery());
+            var results = await Mediator.Send(new GetAllPersonsQuery());
             return Ok(results);
         }
 
@@ -72,7 +67,7 @@ namespace MGK.ServiceTemplate.API.Controllers
         [ProducesResponseType(typeof(ErrorDetails), (int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetPersonAsync(Guid personId)
         {
-            var result = await _mediator.Send(new GetPersonQuery(personId));
+            var result = await Mediator.Send(new GetPersonQuery { PersonId = personId });
             return Ok(result);
         }
 
@@ -80,13 +75,14 @@ namespace MGK.ServiceTemplate.API.Controllers
         /// Removes the information of a person.
         /// </summary>
         /// <param name="personId">The identification of the person.</param>
+		/// <param name="cancellationToken">Cancellation Token in case the user cancels the process.</param>
         /// <returns>Information of the person removed.</returns>
         [HttpDelete]
         [Route("{personId}")]
         [ProducesResponseType(typeof(ResponseViewModel), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> RemovePersonAsync(Guid personId)
+        public async Task<IActionResult> RemovePersonAsync(Guid personId, CancellationToken cancellationToken = default)
         {
-            var result = await _mediator.Send(new RemovePersonCommand(personId));
+            var result = await Mediator.Send(new RemovePersonCommand { PersonId = personId }, cancellationToken);
             return Ok(result);
         }
 
@@ -95,16 +91,17 @@ namespace MGK.ServiceTemplate.API.Controllers
         /// </summary>
         /// <param name="personId">The identification of the person.</param>
         /// <param name="request">The requested data to update.</param>
+		/// <param name="cancellationToken">Cancellation Token in case the user cancels the process.</param>
         /// <returns>The updated information of the person.</returns>
         [HttpPut]
         [Route("{personId}")]
         [ProducesResponseType(typeof(PersonViewModel), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(ErrorDetails), (int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> UpdatePersonAsync(Guid personId, [FromBody]UpdatePersonRequest request)
+        [ProducesResponseType(typeof(ErrorDetails), (int)HttpStatusCode.Conflict)]
+        public async Task<IActionResult> UpdatePersonAsync(Guid personId, [FromBody]UpdatePersonRequest request, CancellationToken cancellationToken = default)
         {
-            var command = _mapper.Map<UpdatePersonCommand>(request);
-            command.PersonId = personId;
-            var result = await _mediator.Send(command);
+            var command = new UpdatePersonCommand { PersonId = personId };
+            Mapper.Map(request, command);
+            var result = await Mediator.Send(command, cancellationToken);
             return Ok(result);
         }
     }
