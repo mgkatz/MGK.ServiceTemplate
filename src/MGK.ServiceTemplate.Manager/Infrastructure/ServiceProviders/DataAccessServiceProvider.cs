@@ -1,11 +1,12 @@
 ﻿using MGK.ServiceBase.Services;
 using MGK.ServiceTemplate.DataAccess.SeedWork;
+using System;
 
 namespace MGK.ServiceTemplate.Manager.Infrastructure.ServiceProviders
 {
 	public sealed class DataAccessServiceProvider : ServiceProvider<string, IDataAccessService>, IDataAccessServiceProvider
 	{
-		public DataAccessServiceProvider(System.Func<string, IDataAccessService> dataAccessServices)
+		public DataAccessServiceProvider(Func<string, IDataAccessService> dataAccessServices)
 			: base(dataAccessServices)
 		{
 		}

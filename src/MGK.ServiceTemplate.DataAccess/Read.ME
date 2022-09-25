@@ -1,4 +1,14 @@
-﻿**************
+﻿To manage the migrations add a file named appsettings.local.json in the root of the DataAccess project.
+It should have this structure:
+
+{
+  "ConnectionStrings": {
+    "<Name_of_the_Connection>": "Data Source=<Name_of_the_SQL_Server>;Initial Catalog=<Name_of_the_DB>;Integrated Security=True;"
+  }
+}
+
+To run anything related to EF Core in the Package Manager Console, this package is mandatory: Microsoft.EntityFrameworkCore.Tools
+**************
 * Code first *
 **************
 To create the migrations from the Package Manager Console:
